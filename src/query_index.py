@@ -11,7 +11,16 @@ CLIENT = qc.QdrantClient(url="localhost")
 METRIC = models.Distance.DOT
 
 def embed_query(query, embedder):
+    """
+    Embeds a query using the specified embedder.
 
+    Args:
+        query (str): The query to embed.
+        embedder (str): The embedder to use. Must be either "openai" or "instructor".
+
+    Returns:
+        A list of floats representing the embedding of the query.
+    """
     if embedder == "openai":
         # Fetch API key from environment variable or prompt user for it
         api_key = os.getenv('API_KEY')
@@ -175,7 +184,7 @@ def return_results(query, results, score=True):
     return '\n'.join(output)
 
 
-def ue5_docs_search(
+def docs_search(
     query, 
     embedder=None,
     top_k=10, 
@@ -219,8 +228,8 @@ def ue5_docs_search(
 
 
 
-class Ue5DocSearch():
-    """Class for handling unreal engine documentation queries."""
+class DocSearch():
+    """Class for handling documentation queries."""
     def __init__(
             self, 
             embedder = "openai",
@@ -279,7 +288,7 @@ class Ue5DocSearch():
         if print_output is not None:
             args_dict["print_output"] = print_output
 
-        output = ue5_docs_search(query, **args_dict)
+        output = docs_search(query, **args_dict)
         return output
 
 
@@ -298,7 +307,7 @@ if __name__ == "__main__":
         DIMENSION = 1536
     else:
         DIMENSION = 768
-    fosearch = Ue5DocSearch(
+    fosearch = DocSearch(
         embedder=args.embedder, 
         open_url=args.open_url, 
         top_k=args.top_k, 

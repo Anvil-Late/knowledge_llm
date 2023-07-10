@@ -1,5 +1,5 @@
 import os
-from query_index import Ue5DocSearch
+from query_index import DocSearch
 import torch
 import logging
 import re
@@ -31,12 +31,11 @@ def main(
     block_types = None, 
     score = False, 
     open_url = True,
-    print_output = True,
-    return_output = False
+    print_output = True
     ):
 
     # Set up query
-    query_machine = Ue5DocSearch(
+    query_machine = DocSearch(
         embedder=embedder,
         top_k=top_k,
         block_types=block_types,
@@ -47,9 +46,7 @@ def main(
 
     query_output = query_machine(query)
 
-    #print(f'query_output: {query_output}')
-
-    prompt_folder = '/Users/anvil/Documents/llm/llama.cpp/prompts'
+  
 
     # Set up prompt template
     prompt = f"""
@@ -61,16 +58,12 @@ Relevant documentation: {remove_tabbed_lines(query_output)}
 Query: {query}
 
 Response: Here's the answer to your query:"""
-#Answer: Here's how to solve your problem:
-    # Return prompt if return_output is True
-    if return_output:
-        print(prompt)
-        return prompt
+
+
+    print(prompt)
+    return prompt
     
-    # Save prompt to file if return_output is False
-    else:
-        with open(os.path.join(prompt_folder, "custom_prompt.txt"), "w") as f:
-            f.write(prompt)
+
 
 
 
@@ -84,6 +77,5 @@ if __name__ == '__main__':
     parser.add_argument('--open_url', type=bool, default=False)
     parser.add_argument('--embedder', type=str, default='instructor')
     parser.add_argument('--print_output', type=bool, default=False)
-    parser.add_argument('--return_output', type=bool, default=False)
     args = parser.parse_args()
     main(**vars(args))
